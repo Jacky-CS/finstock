@@ -7,7 +7,7 @@ import time
 import random
 import sqlite3
 
-from sympy import C
+# from sympy import C
 
 
 class SQLError(BaseException):
@@ -52,15 +52,6 @@ def SQLData_Info_Check(date, stock_no,row):
         print(strfield+strvalue)
         c.execute(strfield+strvalue)
         conn.commit()
-        
-
-def get_stockNo_histor(date, stock_no):
-    # date ='20210309',stock_no = '2330'
-    url = 'https://www.twse.com.tw/exchangeReport/STOCK_DAY?date=%s&stockNo=%s'%(date,stock_no)
-    r = requests.get(url) # r.text
-    data = r.json()
-    # print(pd.DataFrame(data['data'], columns = data['fields']))
-    return(data['data'])
 
 
 def get_stock_histor(date):
@@ -91,7 +82,6 @@ def today_stock():
     # print(loc_dt.isoweekday())
     if loc_dt.isoweekday() < 6:
         loc_dt_format = loc_dt.strftime("%Y%m%d") # %H:%M:%S
-        # print(loc_dt_format) 
         get_stock_histor(loc_dt_format)
         return loc_dt_format
 
@@ -102,11 +92,10 @@ def Init():
         time_del = datetime.timedelta(days=i) 
         new_dt = loc_dt - time_del 
         print(new_dt.isoweekday())
-        if new_dt.isoweekday() <6 :
+        if new_dt.isoweekday() <6 : # to fix sql已存在
             new_dt_format = new_dt.strftime("%Y%m%d") # %H:%M:%S
             print(new_dt_format)
-            t = random.randrange(1500,6000) # wait
-            # print(t)
+            t = random.randrange(1500,5000) 
             time.sleep(t/1000)
             get_stock_histor(new_dt_format)
 
@@ -114,3 +103,4 @@ def Init():
 # print(today_stock())
 c,conn=Sqlconnection()
 Init()
+today_stock()
