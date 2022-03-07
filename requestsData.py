@@ -44,7 +44,7 @@ def SQLData_Info_Check(date, stock_no,row):
     c.execute(strsql)
     checkdata=c.fetchone()
     if checkdata==None:
-        strsql="insert into t"+stock_no+" (DATEDAY,DATEMONTH,STOCKNO,STOCKNAME,TRADE_VOL,TRANS_ACTION,TRADE_VALUE,OPEN_PRICE,HIGH_PRICE,LOW_PRICE,"
+        strsql="insert into t"+stock_no+" (DATEDAY,DATEMONTH,STOCKNO,STOCKNAME,TRADE_VOL,TRANS_ACTION,TRADE_VALUE,OPEN_PRICE,HIGH_PRICE,LOW_PRICE,CLOSE_PRICE"
 
 
 def get_stockNo_histor(date, stock_no):
