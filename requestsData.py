@@ -29,12 +29,6 @@ def SQLData_Table_Check(date,stock_no):
         # c,conn=Sqlconnection()
         print('No DataTable')
         strsql="CREATE TABLE t"+stock_no+" (DATEDAY TEXT,DATEMONTH TEXT, STOCKNO CHAR(10), STOCKNAME TEXT, TRADE_VOL INT, TRANS_ACTION INT, TRADE_VALUE INT, OPEN_PRICE FLOAT, HIGH_PRICE FLOAT, LOW_PRICE FLOAT, CLOSE_PRICE FLOAT, DIR TEXT, CHANG FLOAT, PE_RATIO FLOAT)"
-        # print(strsql)
-        #CREATE INDEX DATEDAY_INDEX ON t0050 (DATEDAY);
-        c.execute(strsql)
-        strsql="CREATE INDEX DATEDAY_INDEX ON t"+stock_no+" (DATEDAY)"
-        c.execute(strsql)
-        strsql="CREATE INDEX DATEMONTH_INDEX ON t"+stock_no+" (DATEMONTH)"
         c.execute(strsql)
         conn.commit()
 
@@ -44,8 +38,21 @@ def SQLData_Info_Check(date, stock_no,row):
     c.execute(strsql)
     checkdata=c.fetchone()
     if checkdata==None:
-        strsql="insert into t"+stock_no+" (DATEDAY,DATEMONTH,STOCKNO,STOCKNAME,TRADE_VOL,TRANS_ACTION,TRADE_VALUE,OPEN_PRICE,HIGH_PRICE,LOW_PRICE,CLOSE_PRICE"
-
+        strfield="insert into t"+stock_no+" (DATEDAY,DATEMONTH,STOCKNO,STOCKNAME,TRADE_VOL,TRANS_ACTION,TRADE_VALUE,OPEN_PRICE,HIGH_PRICE,LOW_PRICE,CLOSE_PRICE,DIR,CHANG,PE_RATIO) values("
+        strvalue="'"+date+"','"+date[:6]+"',"
+        for row_column in range(len(row)):
+            if row_column==9:
+                # print(row[row_column].split(">")[1].replace("</p",""))
+                strvalue+="'"+row[row_column].split(">")[1].replace("</p","")+"',"
+            elif row_column!=11 and row_column!=12 and row_column!=13 and row_column!=14:
+                if row_column==15:
+                    strvalue+="'"+row[row_column]+"')"
+                else:
+                    strvalue+="'"+row[row_column]+"',"
+        print(strfield+strvalue)
+        c.execute(strfield+strvalue)
+        conn.commit()
+        
 
 def get_stockNo_histor(date, stock_no):
     # date ='20210309',stock_no = '2330'
