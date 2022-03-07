@@ -7,8 +7,6 @@ import time
 import random
 import sqlite3
 
-from sympy import C
-
 
 class SQLError(BaseException):
     pass
@@ -18,7 +16,7 @@ def Sqlconnection():
     c=conn.cursor()
     return c,conn
 
-def SQLData_Table_Check(date,stock_no):
+def SQLData_Table_Check(stock_no):
     c,conn=Sqlconnection()
     try:
         strSql="select * from t"+stock_no
@@ -52,15 +50,17 @@ def SQLData_Info_Check(date, stock_no,row):
         print(strfield+strvalue)
         c.execute(strfield+strvalue)
         conn.commit()
-        
 
-def get_stockNo_histor(date, stock_no):
-    # date ='20210309',stock_no = '2330'
-    url = 'https://www.twse.com.tw/exchangeReport/STOCK_DAY?date=%s&stockNo=%s'%(date,stock_no)
-    r = requests.get(url) # r.text
-    data = r.json()
-    # print(pd.DataFrame(data['data'], columns = data['fields']))
-    return(data['data'])
+#加權指數確認日期有無資料
+def TA00_Check_Date(date):
+    c,conn=Sqlconnection()
+    strsql="SELECT DATEDAY t where DATEDAY='"+date+"'"
+    c.execute(strsql)
+    checkdate=c.fetchone()
+    if checkdate==None:
+        return True
+    else:
+        return False
 
 
 def get_stock_histor(date):
@@ -79,7 +79,7 @@ def get_stock_histor(date):
         for row in stockdata['data9']:
             print(row) # to sql
             stock_no=row[0].replace("'","")
-            SQLData_Table_Check(date,stock_no)
+            SQLData_Table_Check(stock_no)
             SQLData_Info_Check(date,stock_no,row)
     
 
@@ -104,11 +104,12 @@ def Init():
         print(new_dt.isoweekday())
         if new_dt.isoweekday() <6 :
             new_dt_format = new_dt.strftime("%Y%m%d") # %H:%M:%S
-            print(new_dt_format)
-            t = random.randrange(1500,6000) # wait
-            # print(t)
-            time.sleep(t/1000)
-            get_stock_histor(new_dt_format)
+            if TA00_Check_Date(new_dt_format)==True:
+                print(new_dt_format)
+                t = random.randrange(1500,6000) # wait
+                # print(t)
+                time.sleep(t/1000)
+                get_stock_histor(new_dt_format)
 
 
 # print(today_stock())
