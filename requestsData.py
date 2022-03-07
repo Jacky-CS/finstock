@@ -7,11 +7,6 @@ import time
 import random
 import sqlite3
 
-<<<<<<< HEAD
-=======
-# from sympy import C
-
->>>>>>> 730d768232c5fdcd187408c56d79a666f8f15927
 
 class SQLError(BaseException):
     pass
@@ -55,7 +50,6 @@ def SQLData_Info_Check(date, stock_no,row):
         print(strfield+strvalue)
         c.execute(strfield+strvalue)
         conn.commit()
-<<<<<<< HEAD
 
 #加權指數確認日期有無資料
 def TA00_Check_Date(date):
@@ -67,8 +61,6 @@ def TA00_Check_Date(date):
         return True
     else:
         return False
-=======
->>>>>>> 730d768232c5fdcd187408c56d79a666f8f15927
 
 
 def get_stock_histor(date):
@@ -111,19 +103,12 @@ def Init():
         print(new_dt.isoweekday())
         if new_dt.isoweekday() <6 : # to fix sql已存在
             new_dt_format = new_dt.strftime("%Y%m%d") # %H:%M:%S
-<<<<<<< HEAD
             if TA00_Check_Date(new_dt_format)==True:
                 print(new_dt_format)
                 t = random.randrange(1500,6000) # wait
                 # print(t)
                 time.sleep(t/1000)
                 get_stock_histor(new_dt_format)
-=======
-            print(new_dt_format)
-            t = random.randrange(1500,5000) 
-            time.sleep(t/1000)
-            get_stock_histor(new_dt_format)
->>>>>>> 730d768232c5fdcd187408c56d79a666f8f15927
 
 
 # print(today_stock())
