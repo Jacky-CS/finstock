@@ -5,9 +5,47 @@ import requests
 import datetime
 import time
 import random
+import sqlite3
+
+from sympy import C
+
 
 class SQLError(BaseException):
     pass
+
+def Sqlconnection():
+    conn = sqlite3.connect("D:\SQLLite_Stock\TW_Stock.db")
+    c=conn.cursor()
+    return c,conn
+
+def SQLData_Table_Check(date,stock_no):
+    c,conn=Sqlconnection()
+    try:
+        strSql="select * from t"+stock_no
+        c.execute(strSql)
+        print('has DataTable')
+
+    except:
+        # c,conn=Sqlconnection()
+        print('No DataTable')
+        strsql="CREATE TABLE t"+stock_no+" (DATEDAY TEXT,DATEMONTH TEXT, STOCKNO CHAR(10), STOCKNAME TEXT, TRADE_VOL INT, TRANS_ACTION INT, TRADE_VALUE INT, OPEN_PRICE FLOAT, HIGH_PRICE FLOAT, LOW_PRICE FLOAT, CLOSE_PRICE FLOAT, DIR TEXT, CHANG FLOAT, PE_RATIO FLOAT)"
+        # print(strsql)
+        #CREATE INDEX DATEDAY_INDEX ON t0050 (DATEDAY);
+        c.execute(strsql)
+        strsql="CREATE INDEX DATEDAY_INDEX ON t"+stock_no+" (DATEDAY)"
+        c.execute(strsql)
+        strsql="CREATE INDEX DATEMONTH_INDEX ON t"+stock_no+" (DATEMONTH)"
+        c.execute(strsql)
+        conn.commit()
+
+def SQLData_Info_Check(date, stock_no,row):
+    c,conn=Sqlconnection()
+    strsql="select DATEDAY from t"+stock_no+" where DATEDAY='"+date+"'"
+    c.execute(strsql)
+    checkdata=c.fetchone()
+    if checkdata==None:
+        strsql="insert into t"+stock_no+""
+
 
 def get_stockNo_histor(date, stock_no):
     # date ='20210309',stock_no = '2330'
@@ -32,10 +70,10 @@ def get_stock_histor(date):
         print(pd.DataFrame(stockdata['data9'], columns = stockdata['fields9'])) # data4
         print(stockdata['fields9'])
         for row in stockdata['data9']:
-            # print(row) # to sql
-            err = None
-            if err != None :
-                raise SQLError("stock SQL ERROR")
+            print(row) # to sql
+            stock_no=row[0].replace("'","")
+            SQLData_Table_Check(date,stock_no)
+            SQLData_Info_Check(date,stock_no,row)
     
 
 def today_stock():
@@ -67,4 +105,5 @@ def Init():
 
 
 # print(today_stock())
+c,conn=Sqlconnection()
 Init()
