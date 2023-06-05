@@ -1,6 +1,10 @@
+"""
+取得與更新股票資料，儲存資料在sqline
+"""
+
 import requests
 import pandas as pd
-import numpy as np
+# import numpy as np
 import requests
 import datetime
 import time
@@ -8,15 +12,17 @@ import random
 import sqlite3
 
 
-class SQLError(BaseException):
-    pass
+# class SQLError(BaseException):
+#     pass
 
-def Sqlconnection():
-    conn = sqlite3.connect("D:\SQLLite_Stock\TW_Stock.db")
+def Sqlconnection(path:str):
+    "Sqlconnection"
+    conn = sqlite3.connect(path)
     c=conn.cursor()
     return c,conn
 
-def SQLData_Table_Check(stock_no):
+def SQLData_Table_Check(stock_no:int):
+    "SQLData_Table_Check"
     c,conn=Sqlconnection()
     try:
         strSql="select * from t"+stock_no
@@ -31,6 +37,7 @@ def SQLData_Table_Check(stock_no):
         conn.commit()
 
 def SQLData_Info_Check(date, stock_no,row):
+    "SQLData_Info_Check"
     c,conn=Sqlconnection()
     strsql="select DATEDAY from t"+stock_no+" where DATEDAY='"+date+"'"
     c.execute(strsql)
@@ -51,8 +58,9 @@ def SQLData_Info_Check(date, stock_no,row):
         c.execute(strfield+strvalue)
         conn.commit()
 
-#加權指數確認日期有無資料
+
 def TA00_Check_Date(date):
+    "加權指數確認日期有無資料"
     c,conn=Sqlconnection()
     strsql="SELECT DATEDAY t where DATEDAY='"+date+"'"
     c.execute(strsql)
@@ -103,15 +111,16 @@ def Init():
         print(new_dt.isoweekday())
         if new_dt.isoweekday() <6 : # to fix sql已存在
             new_dt_format = new_dt.strftime("%Y%m%d") # %H:%M:%S
-            if TA00_Check_Date(new_dt_format)==True:
-                print(new_dt_format)
-                t = random.randrange(1500,6000) # wait
-                # print(t)
-                time.sleep(t/1000)
-                get_stock_histor(new_dt_format)
+            # if TA00_Check_Date(new_dt_format)==True:
+            #     print(new_dt_format)
+            #     t = random.randrange(1500,6000) # wait
+            #     # print(t)
+            #     time.sleep(t/1000)
+            #     get_stock_histor(new_dt_format)
 
 
-# print(today_stock())
-c,conn=Sqlconnection()
+print(today_stock())
+dbpath = "D:\SQLLite_Stock\TW_Stock.db"
+# c,conn=Sqlconnection(dbpath)
 Init()
 today_stock()
